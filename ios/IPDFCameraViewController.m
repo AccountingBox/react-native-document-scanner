@@ -174,7 +174,8 @@
 
     if (self.cameraViewType != IPDFCameraViewTypeNormal)
     {
-        image = [self filteredImageUsingEnhanceFilterOnImage:image];
+        // show preview without filter
+        // image = [self filteredImageUsingEnhanceFilterOnImage:image];
     }
     else
     {
@@ -439,7 +440,18 @@
 - (CIImage *)filteredImageUsingEnhanceFilterOnImage:(CIImage *)image
 {
     [self start];
-    return [CIFilter filterWithName:@"CIColorControls" keysAndValues:kCIInputImageKey, image, @"inputBrightness", @(self.brightness), @"inputContrast", @(self.contrast), @"inputSaturation", @(self.saturation), nil].outputImage;
+    
+    CIFilter *blur = [CIFilter filterWithName:@"CIGaussianBlur"];
+    [blur setValue:image forKey:kCIInputImageKey];
+    float blurRadius = 100.0f;
+    [blur setValue:[NSNumber numberWithFloat:blurRadius] forKey:@"inputRadius"];
+    // return blur.outputImage;
+    CIImage *optimized = [CIFilter filterWithName:@"CIDivideBlendMode" keysAndValues:kCIInputImageKey,blur.outputImage,
+                          @"inputBackgroundImage",image,nil].outputImage;
+    //return optimized;
+    return [optimized imageByCroppingToRect:[image extent]];
+    
+//    return [CIFilter filterWithName:@"CIColorControls" keysAndValues:kCIInputImageKey, image, @"inputBrightness", @(self.brightness), @"inputContrast", @(self.contrast), @"inputSaturation", @(self.saturation), nil].outputImage;
 }
 
 - (CIImage *)filteredImageUsingContrastFilterOnImage:(CIImage *)image
