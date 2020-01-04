@@ -443,7 +443,7 @@
     
     CIFilter *blur = [CIFilter filterWithName:@"CIGaussianBlur"];
     [blur setValue:image forKey:kCIInputImageKey];
-    float blurRadius = 100.0f;
+    float blurRadius = 70.0f;
     [blur setValue:[NSNumber numberWithFloat:blurRadius] forKey:@"inputRadius"];
     // return blur.outputImage;
     CIImage *optimized = [CIFilter filterWithName:@"CIDivideBlendMode" keysAndValues:kCIInputImageKey,blur.outputImage,
